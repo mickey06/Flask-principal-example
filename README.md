@@ -23,9 +23,11 @@ https://github.com/mattupstate/flask-principal/blob/master/flask_principal/__ini
 
 This example was inspired by :
 
+Flaskr
+
 http://stackoverflow.com/questions/7050137/flask-principal-tutorial-auth-authr
 
-and 
+and
 
 http://terse-words.blogspot.com/2011/06/flask-extensions-for-authorization-with.html
 
