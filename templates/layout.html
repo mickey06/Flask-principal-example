@@ -39,13 +39,14 @@
         <div class=page>
             <h1>Principalr</h1>
             <div class=metanav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('admin') }}">Admin</a>
+                <a href="{{ url_for('editor') }}">Edit</a>
+                <a href="{{ url_for('about') }}">About</a>
                 {% if g.identity.name == 'anon' %}
-                    <a href="{{ url_for('login') }}">log in</a>
+                    <a href="{{ url_for('login') }}">| Log in</a>
                 {% else %}
-                    <a href="{{ url_for('index') }}">Home</a>
-                    <a href="{{ url_for('admin') }}">Admin</a>
-                    <a href="{{ url_for('privileges') }}">Privileges</a>
-                    <a href="{{ url_for('logout') }}">Log out</a>
+                    <a href="{{ url_for('logout') }}">| Log out</a>
                 {% endif %}
             </div>
             {% for message in get_flashed_messages() %}

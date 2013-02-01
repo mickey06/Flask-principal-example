@@ -39,25 +39,24 @@ to_sign_in = ActionNeed('sign in')
 # Permissions
 user = Permission(to_sign_in)
 user.description = "User's permissions"
-editor = Permission(to_sign_in, be_editor)
+editor = Permission(be_editor)
 editor.description = "Editor's permissions"
-admin = Permission(to_sign_in, be_admin)
+admin = Permission(be_admin)
 admin.description = "Admin's permissions"
 
 apps_needs = [be_admin, be_editor, to_sign_in]
 apps_permissions = [user, editor, admin]
 
 
-@app.route('/')
-@user.require(http_exception=403)
-def index():
-    return render_template('index.html')
-
-
-@app.route('/admin')
-@admin.require(http_exception=403)
-def admin():
-    return render_template('admin.html')
+def authenticate(email, password):
+    if password == email + "user":
+        return "the_only_user"
+    elif password == email + "admin":
+        return "the_only_admin"
+    elif password == email + "editor":
+        return "the_only_editor"
+    else:
+        return None
 
 
 def current_privileges():
@@ -65,18 +64,10 @@ def current_privileges():
             for n in apps_needs if n in g.identity.provides)
 
 
-@app.route('/privileges')
-def privileges():
-    flash(('Your current identity is {id}.').format(id=g.identity.name))
-
-    return render_template('privileges.html', priv=current_privileges())
-
-
-def authenticate(email, password):
-    if password == email + "_":
-        return "my_only_user"
-    else:
-        return None
+@app.route('/')
+@user.require(http_exception=403)
+def index():
+    return render_template('index.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -91,6 +82,23 @@ def login():
         else:
             return abort(401)
     return render_template('login.html')
+
+
+@app.route('/admin')
+@admin.require(http_exception=403)
+def admin():
+    return render_template('admin.html')
+
+
+@app.route('/edit')
+@editor.require(http_exception=403)
+def editor():
+    return render_template('editor.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 
 @app.route("/logout")
@@ -109,13 +117,32 @@ def authentication_failed(e):
 
 @app.errorhandler(403)
 def authorisation_failed(e):
-    return privileges()
+    flash(('Your current identity is {id}. You need special privileges to'
+           ' access this page').format(id=g.identity.name))
+
+    return render_template('privileges.html', priv=current_privileges())
 
 
 @identity_loaded.connect_via(app)
 def on_identity_loaded(sender, identity):
-    if identity.name != 'anon':
-        identity.provides.add(to_sign_in)
+    needs = []
+
+    if identity.name in ('the_only_user', 'the_only_editor', 'the_only_admin'):
+        needs.append(to_sign_in)
+
+    if identity.name in ('the_only_editor', 'the_only_admin'):
+        needs.append(be_editor)
+
+    if identity.name == 'the_only_admin':
+        needs.append(be_admin)
+
+    for n in needs:
+        identity.provides.add(n)
+
+    # If the authenticated identity is :
+    # - 'the_only user' she can sign in
+    # - "the_only_editor" she can sign in and edit
+    # - "the_only_admin" she can sign in , edit and administrate
 
 
 if __name__ == "__main__":
