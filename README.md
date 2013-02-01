@@ -17,7 +17,7 @@ http://stackoverflow.com/questions/739654/understanding-python-decorators
 You can then look at the example :
 https://github.com/mickey06/Flask-principal-example/blob/master/FPrincipals.py
 
-and the extensions source code.
+and the extension's source code.
 
 https://github.com/mattupstate/flask-principal/blob/master/flask_principal/__init__.py
 
