@@ -1,4 +1,4 @@
-# Todo: http://flask.pocoo.org/snippets/62/
+# -*- coding: utf-8 -*-
 
 from flask import (
     abort,
@@ -21,35 +21,35 @@ from flask_principal import (
     Principal,
     RoleNeed)
 
-# import flask_debugtoolbar
 
 app = Flask(__name__)
 
 app.config.update(
-    # DEBUG_TB_INTERCEPT_REDIRECTS=False,
-    # DEBUG_TB_TEMPLATE_EDITOR_ENABLED=True,
     DEBUG=True,
     SECRET_KEY='secret_xxx')
 
-# flask_debugtoolbar.DebugToolbarExtension(app)
 
 principals = Principal(app, skip_static=True)
 
-be_editor = RoleNeed('editor')
-to_sign_in = ActionNeed('sign_in')
-sign_in = Permission(to_sign_in, be_editor)
-sign_in.description = "Editor's permissions"
-
-
+# Needs
 be_admin = RoleNeed('admin')
-admin = Permission(be_admin)
+be_editor = RoleNeed('editor')
+to_sign_in = ActionNeed('sign in')
+
+# Permissions
+user = Permission(to_sign_in)
+user.description = "User's permissions"
+editor = Permission(to_sign_in, be_editor)
+editor.description = "Editor's permissions"
+admin = Permission(to_sign_in, be_admin)
 admin.description = "Admin's permissions"
 
-perms = [sign_in, admin]
+apps_needs = [be_admin, be_editor, to_sign_in]
+apps_permissions = [user, editor, admin]
 
 
 @app.route('/')
-@sign_in.require(http_exception=403)
+@user.require(http_exception=403)
 def index():
     return render_template('index.html')
 
@@ -60,9 +60,16 @@ def admin():
     return render_template('admin.html')
 
 
+def current_privileges():
+    return (('{method} : {value}').format(method=n.method, value=n.value)
+            for n in apps_needs if n in g.identity.provides)
+
+
 @app.route('/privileges')
 def privileges():
-    return render_template('privileges.html')
+    flash(('Your current identity is {id}.').format(id=g.identity.name))
+
+    return render_template('privileges.html', priv=current_privileges())
 
 
 def authenticate(email, password):
@@ -102,18 +109,7 @@ def authentication_failed(e):
 
 @app.errorhandler(403)
 def authorisation_failed(e):
-    flash('This ressource is protected. You need more privileges.')
-    priv = []
-    for p in perms:
-        priv.append(p.description)
-        for n in p.needs:
-            s = ('Method : {method}, value : {value}, provide : {provides}'
-                 ).format(method=n.method,
-                          value=n.value,
-                          provides=(n in g.identity.provides))
-            priv.append(s)
-
-    return render_template('privileges.html', priv=priv)
+    return privileges()
 
 
 @identity_loaded.connect_via(app)

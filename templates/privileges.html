@@ -1,8 +1,15 @@
 {% extends "layout.html" %}
 {% block body %}
-  <h2>Privileges</h2>
-  {% for p in priv %}
-      <div class=flash>{{ p }}</div>
+
+  {% if g.identity.name == 'anon' %}
+    <h2>You must log in to access this page</h2>
+  {% else %}
+    <h2>Your current privileges</h2>
+  {% endif %}
+
+  <ul>
+    {% for p in priv %}
+      <li>{{ p }}</li>
     {% endfor %}
-  List of privs.
+  </ul>
 {% endblock %}

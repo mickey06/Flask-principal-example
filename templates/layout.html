@@ -1,36 +1,63 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Principalr</title>
-  <link
-    rel=stylesheet
-    type=text/css
-      href="{{ url_for('static', filename='style.css') }}">
-  <link
-    rel="shortcut icon"
-    href="{{ url_for('.static',
-    filename='favicon.ico') }}" />
-</head>
-<body>
-  <div class=page>
-    <h1>Principalr</h1>
-    <div class=metanav>
-    {% if g.identity.name == 'anon' %}
-      <a href="{{ url_for('login') }}">log in</a>
-    {% else %}
-      <a href="{{ url_for('index') }}">Home</a>
-      <a href="{{ url_for('admin') }}">Admin</a>
-      <a href="{{ url_for('privileges') }}">Privileges</a>
-      <a href="{{ url_for('logout') }}">log out</a>
-    {% endif %}
-    </div>
-    {% for message in get_flashed_messages() %}
-      <div class=flash>{{ message }}</div>
-    {% endfor %}
-    {% block body %}{% endblock %}
-    {% block footer %}{% endblock %}
-  </div>
-</body>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Principalr</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link
+          rel=stylesheet
+          type=text/css
+            href="{{ url_for('static', filename='css/normalize.css') }}">
+
+        <link
+          rel=stylesheet
+          type=text/css
+            href="{{ url_for('static', filename='css/main.css') }}">
+
+
+        <link
+          rel="shortcut icon"
+          href="{{ url_for('.static',
+          filename='favicon.ico') }}" />
+
+        <script
+          src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}j">
+        </script>
+
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div class=page>
+            <h1>Principalr</h1>
+            <div class=metanav>
+                {% if g.identity.name == 'anon' %}
+                    <a href="{{ url_for('login') }}">log in</a>
+                {% else %}
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('admin') }}">Admin</a>
+                    <a href="{{ url_for('privileges') }}">Privileges</a>
+                    <a href="{{ url_for('logout') }}">Log out</a>
+                {% endif %}
+            </div>
+            {% for message in get_flashed_messages() %}
+                <div class=flash>{{ message }}</div>
+            {% endfor %}
+            {% block body %}{% endblock %}
+            {% block footer %}{% endblock %}
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+
+    </body>
 </html>
+
 
