@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Principalr</title>
+  <link
+    rel=stylesheet
+    type=text/css
+      href="{{ url_for('static', filename='style.css') }}">
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('.static',
+    filename='favicon.ico') }}" />
+</head>
+<body>
+  <div class=page>
+    <h1>Principalr</h1>
+    <div class=metanav>
+    {% if g.identity.name == 'anon' %}
+      <a href="{{ url_for('login') }}">log in</a>
+    {% else %}
+      <a href="{{ url_for('index') }}">Home</a>
+      <a href="{{ url_for('admin') }}">Admin</a>
+      <a href="{{ url_for('privileges') }}">Privileges</a>
+      <a href="{{ url_for('logout') }}">log out</a>
+    {% endif %}
+    </div>
+    {% for message in get_flashed_messages() %}
+      <div class=flash>{{ message }}</div>
+    {% endfor %}
+    {% block body %}{% endblock %}
+    {% block footer %}{% endblock %}
+  </div>
+</body>
+</html>
+

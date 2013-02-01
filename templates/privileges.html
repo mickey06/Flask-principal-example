@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Privileges</h2>
+  {% for p in priv %}
+      <div class=flash>{{ p }}</div>
+    {% endfor %}
+  List of privs.
+{% endblock %}
